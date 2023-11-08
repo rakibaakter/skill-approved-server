@@ -114,8 +114,12 @@ async function run() {
     app.get("/bid", async (req, res) => {
       let query = {};
 
-      if (req.query?.posterEmail) {
+      if (req.query?.userEmail) {
         query = { userEmail: req.query.userEmail };
+      }
+
+      if (req.query?.posterEmail) {
+        query = { posterEmail: req.query.posterEmail };
       }
       const result = await bidCollections.find(query).toArray();
       res.send(result);
