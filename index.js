@@ -101,6 +101,16 @@ async function run() {
       res.send(result);
     });
 
+    // bid job
+    const bidCollections = client.db("postedJobDB").collection("bidRequest");
+
+    app.post("/bid", async (req, res) => {
+      const bidRequest = req.body;
+      console.log(bidRequest);
+      const result = await bidCollections.insertOne(bidRequest);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
