@@ -31,6 +31,22 @@ async function run() {
       .db("postedJobDB")
       .collection("postedJobs");
 
+    app.get("/postedJob", async (req, res) => {
+      const cursor = postedJobCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    // job by category name
+    app.get("/postedJob/:category", async (req, res) => {
+      const selectedCategory = req.params.category;
+      console.log(selectedCategory);
+      const query = { category: selectedCategory };
+      const cursor = postedJobCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     app.post("/postedJob", async (req, res) => {
       const newPostedJob = req.body;
       console.log(newPostedJob);
