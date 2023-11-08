@@ -10,7 +10,7 @@ app.use(express.json());
 
 // mongodb
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.bysunmk.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -32,20 +32,32 @@ async function run() {
       .collection("postedJobs");
 
     app.get("/postedJob", async (req, res) => {
-      const cursor = postedJobCollection.find();
-      const result = await cursor.toArray();
+      let query = {};
+      if (req.query?.category) {
+        query = { category: req.query.category };
+      }
+      const result = await postedJobCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    // job by id
+    app.get("/postedJob/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const query = { _id: new ObjectId(id) };
+      const result = await postedJobCollection.findOne(query);
       res.send(result);
     });
 
     // job by category name
-    app.get("/postedJob/:category", async (req, res) => {
-      const selectedCategory = req.params.category;
-      console.log(selectedCategory);
-      const query = { category: selectedCategory };
-      const cursor = postedJobCollection.find(query);
-      const result = await cursor.toArray();
-      res.send(result);
-    });
+    // app.get("/postedJob/:category", async (req, res) => {
+    //   const selectedCategory = req.params.category;
+    //   console.log(selectedCategory);
+    //   const query = { category: selectedCategory };
+    //   const cursor = postedJobCollection.find(query);
+    //   const result = await cursor.toArray();
+    //   res.send(result);
+    // });
 
     app.post("/postedJob", async (req, res) => {
       const newPostedJob = req.body;
