@@ -111,6 +111,16 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/bid", async (req, res) => {
+      let query = {};
+
+      if (req.query?.posterEmail) {
+        query = { userEmail: req.query.userEmail };
+      }
+      const result = await bidCollections.find(query).toArray();
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
