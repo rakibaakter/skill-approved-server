@@ -36,6 +36,9 @@ async function run() {
       if (req.query?.category) {
         query = { category: req.query.category };
       }
+      if (req.query?.posterEmail) {
+        query = { posterEmail: req.query.posterEmail };
+      }
       const result = await postedJobCollection.find(query).toArray();
       res.send(result);
     });
