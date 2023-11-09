@@ -5,16 +5,16 @@ require("dotenv").config();
 const port = process.env.port || 5000;
 
 // middlewares
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://online-marketplace-e0a8e.web.app",
-    ],
-    credentials: true,
-  })
-);
-// app.use(cors());
+// app.use(
+//   cors({
+//     origin: [
+//       "http://localhost:5173",
+//       "https://online-marketplace-e0a8e.web.app",
+//     ],
+//     credentials: true,
+//   })
+// );
+app.use(cors());
 app.use(express.json());
 
 app.use((req, res, next) => {
