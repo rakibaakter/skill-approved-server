@@ -7,7 +7,10 @@ const port = process.env.port || 5000;
 // middlewares
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: [
+      "http://localhost:5173",
+      "https://online-marketplace-e0a8e.web.app",
+    ],
     credentials: true,
   })
 );
