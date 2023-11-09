@@ -5,8 +5,19 @@ require("dotenv").config();
 const port = process.env.port || 5000;
 
 // middlewares
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    credentials: true,
+  })
+);
+// app.use(cors());
 app.use(express.json());
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  next();
+});
 
 // mongodb
 
@@ -52,16 +63,6 @@ async function run() {
       res.send(result);
     });
 
-    // job by category name
-    // app.get("/postedJob/:category", async (req, res) => {
-    //   const selectedCategory = req.params.category;
-    //   console.log(selectedCategory);
-    //   const query = { category: selectedCategory };
-    //   const cursor = postedJobCollection.find(query);
-    //   const result = await cursor.toArray();
-    //   res.send(result);
-    // });
-
     app.post("/postedJob", async (req, res) => {
       const newPostedJob = req.body;
       console.log(newPostedJob);
@@ -104,6 +105,14 @@ async function run() {
     // bid job
     const bidCollections = client.db("postedJobDB").collection("bidRequest");
 
+    app.get("/bid/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const query = { _id: new ObjectId(id) };
+      const result = await bidCollections.findOne(query);
+      res.send(result);
+    });
+
     app.post("/bid", async (req, res) => {
       const bidRequest = req.body;
       console.log(bidRequest);
@@ -122,6 +131,24 @@ async function run() {
         query = { posterEmail: req.query.posterEmail };
       }
       const result = await bidCollections.find(query).toArray();
+      res.send(result);
+    });
+
+    app.put("/bid/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedBid = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          title: updatedBid.title,
+          userEmail: updatedBid.userEmail,
+          bidDeadline: updatedBid.bidDeadline,
+          bidSalary: updatedBid.bidSalary,
+          status: updatedBid.status,
+        },
+      };
+      const result = await bidCollections.updateOne(filter, updateDoc, options);
       res.send(result);
     });
 
